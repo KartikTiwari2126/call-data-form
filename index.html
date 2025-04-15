@@ -175,7 +175,8 @@
             }
 
             // Send the data to the Google Apps Script endpoint
-            fetch('https://script.google.com/macros/s/AKfycby_B8AYWQU8514M2FEK2cR4aelGLbrsV9CcVphih-o2jPkQkE8bWOtrQNiZv4PRvmsE0w/exec', {
+            fetch('https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycby_B8AYWQU8514M2FEK2cR4aelGLbrsV9CcVphih-o2jPkQkE8bWOtrQNiZv4PRvmsE0w/exec
+', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
