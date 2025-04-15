@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Calling Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .add-lead-source-btn {
+            background-color: #008CBA;
+        }
+        .add-lead-source-btn:hover {
+            background-color: #007B9F;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Daily Calling Report</h2>
+        <form id="callReportForm">
+            <!-- Date -->
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="text" id="date" name="date" disabled>
+            </div>
+
+            <!-- Executive -->
+            <div class="form-group">
+                <label for="executive">Executive</label>
+                <select id="executive" name="executive">
+                    <option value="John Doe">John Doe</option>
+                    <option value="Jane Smith">Jane Smith</option>
+                    <option value="Alice Brown">Alice Brown</option>
+                </select>
+            </div>
+
+            <!-- Lead Sources Section -->
+            <div id="leadSourcesSection">
+                <div class="leadSource" id="leadSource1">
+                    <h4>Lead Source 1</h4>
+                    <div class="form-group">
+                        <label for="leadSource">Lead Source</label>
+                        <input type="text" name="leadSource" placeholder="Enter Lead Source">
+                    </div>
+                    <div class="form-group">
+                        <label for="leadsAssigned">Leads Assigned</label>
+                        <input type="number" name="leadsAssigned" placeholder="Leads Assigned" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="attempted">Attempted</label>
+                        <input type="number" name="attempted" placeholder="Attempted" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="positive">Positive</label>
+                        <input type="number" name="positive" placeholder="Positive" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="negative">Negative</label>
+                        <input type="number" name="negative" placeholder="Negative" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Button to Add More Lead Sources -->
+            <button type="button" class="add-lead-source-btn" onclick="addLeadSource()">Add More Lead Source</button>
+
+            <!-- Submit Button -->
+            <input type="submit" value="Submit Report">
+        </form>
+    </div>
+
+    <script>
+        // Set the current date in the date field
+        document.getElementById('date').value = new Date().toLocaleDateString();
+
+        // Function to add more lead sources
+        function addLeadSource() {
+            let leadSourcesSection = document.getElementById('leadSourcesSection');
+            let leadSourceCount = leadSourcesSection.getElementsByClassName('leadSource').length + 1;
+
+            let newLeadSource = document.createElement('div');
+            newLeadSource.className = 'leadSource';
+            newLeadSource.id = 'leadSource' + leadSourceCount;
+
+            newLeadSource.innerHTML = `
+                <h4>Lead Source ${leadSourceCount}</h4>
+                <div class="form-group">
+                    <label for="leadSource">Lead Source</label>
+                    <input type="text" name="leadSource" placeholder="Enter Lead Source">
+                </div>
+                <div class="form-group">
+                    <label for="leadsAssigned">Leads Assigned</label>
+                    <input type="number" name="leadsAssigned" placeholder="Leads Assigned" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="attempted">Attempted</label>
+                    <input type="number" name="attempted" placeholder="Attempted" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="positive">Positive</label>
+                    <input type="number" name="positive" placeholder="Positive" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="negative">Negative</label>
+                    <input type="number" name="negative" placeholder="Negative" min="0">
+                </div>
+            `;
+
+            leadSourcesSection.appendChild(newLeadSource);
+        }
+
+        // Handle form submission
+        document.getElementById('callReportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            let formData = new FormData(e.target);
+            let data = {
+                date: document.getElementById('date').value,
+                executive: formData.get('executive'),
+                leadSources: []
+            };
+
+            // Collect data for each lead source
+            let leadSources = document.getElementsByClassName('leadSource');
+            for (let i = 0; i < leadSources.length; i++) {
+                let leadSourceData = {
+                    leadSource: leadSources[i].querySelector('[name="leadSource"]').value,
+                    leadsAssigned: leadSources[i].querySelector('[name="leadsAssigned"]').value,
+                    attempted: leadSources[i].querySelector('[name="attempted"]').value,
+                    positive: leadSources[i].querySelector('[name="positive"]').value,
+                    negative: leadSources[i].querySelector('[name="negative"]').value
+                };
+                data.leadSources.push(leadSourceData);
+            }
+
+            // Send the data to the Google Apps Script endpoint
+            fetch('https://script.google.com/macros/s/AKfycbzQgJUxduYZZhgTfGxtmZKqcikYD1D0latJ9iN3kXz7bwfVS79K5w8m27AccWGhBXQx4g/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.text())
+            .then(result => alert('Report submitted successfully!'))
+            .catch(error => alert('Error submitting the report.'));
+        });
+    </script>
+</body>
+</html>
